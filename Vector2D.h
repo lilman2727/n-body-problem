@@ -11,7 +11,7 @@ class Vector2D
 {
     double x, y;
     public:
-    Vector2D();
+    Vector2D() : x(0.0), y(0.0) {};
     Vector2D(double pos_x, double pos_y) : x(pos_x), y(pos_y) {}
     double getX() const { return x; }
     double getY() const { return y; }

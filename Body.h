@@ -8,14 +8,16 @@
 
 class Body
 {
-    int id;
     Vector2D pos;
     Vector2D vel;
     Vector2D acc;
     double mass;
     public:
     Body();
-    Body(Vector2D pos, double mass) : pos(pos), mass(mass) {};
+    Body(Vector2D pos, double mass, int red, int green, int blue) : pos(pos), mass(mass), RED(red), GREEN(green), BLUE(blue) {};
+    int RED;
+    int GREEN;
+    int BLUE;
     double getMass() const { return this->mass; }
     void setMass(double mass) { this->mass = mass; }
     Vector2D getPos() const { return this->pos; }
@@ -25,8 +27,9 @@ class Body
     Vector2D getAcc() const { return this->acc; }
     void setAcc(Vector2D force) { this->acc = force; }
 
-    bool operator==(const Body& rhs) const { return id == rhs.id; }
-    bool operator!=(const Body& rhs) const { return id != rhs.id; }
+
+    bool operator==(const Body& rhs) const { return this == &rhs; }
+    bool operator!=(const Body& rhs) const { return this != &rhs; }
 };
 
 

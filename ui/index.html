@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <title>N-Body Simulator UI</title>
+    <style>
+        body { background-color: #111; color: #fff; font-family: sans-serif; text-align: center; margin-top: 50px; }
+        canvas { background-color: #000; border: 1px solid #444; }
+    </style>
+</head>
+<body>
+<h1>N-Body Simulator</h1>
+<canvas id="simCanvas" width="1600" height="900"></canvas>
+
+<script>
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+
+    function updateBodies(bodies) {
+        // Clear the previous frame
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = "#ffffff";
+
+        // Draw the bodies according to the JSON
+        bodies.forEach(body => {
+            ctx.beginPath();
+            ctx.arc(body.x, body.y, 5, 0, Math.PI * 2);
+            ctx.fill();
+        });
+
+        canvas.addEventListener('click', function(event) {
+            const rect = canvas.getBoundingClientRect();
+
+            // Getting the right coords of mouse click
+            const x = event.clientX - rect.left;
+            const y = event.clientY - rect.top;
+
+            if (typeof addBody !== 'undefined') {
+                addBody(x, y);
+            }
+        });
+    }
+</script>
+</body>
+</html>

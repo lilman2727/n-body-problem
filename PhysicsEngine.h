@@ -16,13 +16,16 @@ class PhysicsEngine
 
     std::vector<Body> bodies;
     public:
-    PhysicsEngine();
-    ~PhysicsEngine();
-    std::vector<Body> getBodies();
+    PhysicsEngine()= default;
+    ~PhysicsEngine()= default;
+    const std::vector<Body>& getBodies() const { return bodies; }
     void step(double dt);
+    void addBody(Body body);
     Vector2D calculateNewtonForce(const Body& first, const Body& second);
     const double G = 6.6743e-11;
     const double epsilon = 1.0; //change depending on scale of simulation
+
+
 };
 
 

@@ -4,6 +4,7 @@
 
 #include "PhysicsEngine.h"
 #include <cmath>
+#include <algorithm>
 
 Vector2D calculatePosVector(const Body& first, const Body& second)
 {
@@ -17,7 +18,6 @@ Vector2D PhysicsEngine::calculateNewtonForce(const Body& first, const Body& seco
     double r_sq = vec_r.getX() * vec_r.getX() + vec_r.getY() * vec_r.getY();
     double r = std::sqrt(r_sq + epsilon * epsilon);
     double f = (G * first.getMass() * second.getMass()) / (r * r * r);
-
     return f * vec_r;
 }
 
@@ -48,6 +48,24 @@ void PhysicsEngine::step(double dt)
         body1.setAcc(new_acc);
 
     }
+
+    bodies.erase(
+    std::remove_if(bodies.begin(), bodies.end(), [](const Body& b) {
+        double x = b.getPos().getX();
+        double y = b.getPos().getY();
+
+        // Nastavíme hranice - okno má 1280x720, takže dáme velkou rezervu
+        // Pokud je x nebo y mimo tyto obří meze, lambda vrátí true (smazat)
+        return (std::abs(x) > 3*1920 || std::abs(y) > 3*1080);
+    }),
+    bodies.end()
+);
 }
+
+void PhysicsEngine::addBody(Body body)
+{
+    bodies.push_back(body);
+}
+
 
 
