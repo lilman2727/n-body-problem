@@ -10,37 +10,75 @@
 </head>
 <body>
 <h1>N-Body Simulator</h1>
+<div style="margin-bottom: 10px;">
+    <label for="massInput">Hmotnost nové planety:</label>
+    <!-- Výchozí hodnota je 1.0e15, krok můžeme dát třeba 1.0e14 -->
+    <div><input type="number" id="massInput" value="1" step="5"> e15</div>
+    <button id="playPauseBtn" style="padding: 5px 15px; cursor: pointer; font-weight: bold;">Start Simulace</button>
+</div>
 <canvas id="simCanvas" width="1600" height="900"></canvas>
 
 <script>
     const canvas = document.getElementById('simCanvas');
     const ctx = canvas.getContext('2d');
 
+    /*let lastClickTime = 0;*/
+
+    canvas.addEventListener('click', function(event) {
+
+        /* Just in case there needs to be a cooldown for adding planets
+
+        let currentTime = Date.now();
+
+        if (currentTime - lastClickTime <= 1000) {
+            console.log("Hold up, dont click so fast!");
+            return;
+        }
+        lastClickTime = currentTime;
+        */
+
+        const rect = canvas.getBoundingClientRect();
+        const x = event.clientX - rect.left;
+        const y = event.clientY - rect.top;
+        const massValue = Number(document.getElementById('massInput').value);
+
+        if (typeof addBody !== 'undefined') {
+            addBody(x, y, massValue);
+        }
+    });
+
+    function scale(mass)
+    {
+        let log = Math.log(mass) / Math.log(1e15);
+        return log ** 533;
+    }
     function updateBodies(bodies) {
         // Clear the previous frame
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        ctx.fillStyle = "#ffffff";
-
         // Draw the bodies according to the JSON
         bodies.forEach(body => {
+            ctx.fillStyle = `rgb(${body.r}, ${body.g}, ${body.b})`;
             ctx.beginPath();
-            ctx.arc(body.x, body.y, 5, 0, Math.PI * 2);
+            ctx.arc(body.x, body.y, 5.0*scale(body.mass), 0, Math.PI * 2);
             ctx.fill();
         });
-
-        canvas.addEventListener('click', function(event) {
-            const rect = canvas.getBoundingClientRect();
-
-            // Getting the right coords of mouse click
-            const x = event.clientX - rect.left;
-            const y = event.clientY - rect.top;
-
-            if (typeof addBody !== 'undefined') {
-                addBody(x, y);
-            }
-        });
     }
+
+    let isSimRunning = false;
+    const playPauseBtn = document.getElementById('playPauseBtn');
+
+    playPauseBtn.addEventListener('click', function() {
+        isSimRunning = !isSimRunning;
+
+        // Změníme text tlačítka podle aktuálního stavu
+        this.innerText = isSimRunning ? "Pause" : "Play";
+
+        // Pošleme stav do C++
+        if (typeof startStopSim !== 'undefined') {
+            startStopSim(isSimRunning);
+        }
+    });
 </script>
 </body>
 </html>

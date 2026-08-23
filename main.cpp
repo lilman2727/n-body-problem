@@ -3,25 +3,33 @@
 #include <thread>
 #include <chrono>
 #include <filesystem>
+#include <iostream>
 #include <random>
 #include <string>
+#include <nlohmann/json.hpp>
+using json = nlohmann::json;
 
 
-std::string getBodiesAsJSON(PhysicsEngine& engine) {
-    std::string json = "[";
-    auto bodies = engine.getBodies();
-    for (size_t i = 0; i < bodies.size(); ++i) {
-        // Získáme souřadnice
-        double x = bodies[i].getPos().getX();
-        double y = bodies[i].getPos().getY();
+std::string getBodiesAsJSON(PhysicsEngine& engine)
+{
+    nlohmann::json j_array = nlohmann::json::array();
+    const auto& bodies = engine.getBodies();
 
-        json += "{\"x\":" + std::to_string(x) + ",\"y\":" + std::to_string(y) + "}";
+    for (const auto& body : bodies)
+    {
+        nlohmann::json j_body;
 
-        // Přidáme čárku, pokud to není poslední prvek
-        if (i < bodies.size() - 1) json += ",";
+        j_body["x"] = body.getPos().getX();
+        j_body["y"] = body.getPos().getY();
+        j_body["r"] = body.RED;
+        j_body["g"] = body.GREEN;
+        j_body["b"] = body.BLUE;
+        j_body["mass"] = body.getMass();
+
+        j_array.push_back(j_body);
     }
-    json += "]";
-    return json;
+    //Converts JSON into a formatted std::string
+    return j_array.dump();
 }
 
 int ranColor()
@@ -39,28 +47,57 @@ int main() {
 
     //Binding adding bodies function
     w.bind("addBody", [&](std::string req) -> std::string {
-        // req will come in this format [xxx.x, yyy.y]
+        // req will come in this format [x, y, mass, r, g, b]
         try {
-            // get rid of the square braces
-        std::string clean = req.substr(1, req.length() - 2);
+            json j = json::parse(req);
 
-        // Find the position of the comma that separates the two values
-        size_t comma = clean.find(',');
-        if (comma != std::string::npos) {
-            // Split the string and convert the parts into doubles
-            double x = std::stod(clean.substr(0, comma));
-            double y = std::stod(clean.substr(comma + 1));
+            if (j.is_array() && j.size() >= 3)
+            {
+                double x = j[0].get<double>();
+                double y = j[1].get<double>();
+                double mass = j[2].get<double>() * 1e15;
 
-            // Create the new body
-            double mass = 1.0e15;
-            engine.addBody(Body(Vector2D(x, y), mass, ranColor(), ranColor(), ranColor()));
-        }
-    } catch (...) {
-        // Just in case something fails
+                // Generate random color only if JS provided one
+                int r = (j.size() >= 6) ? j[3].get<int>() : ranColor();
+                int g = (j.size() >= 6) ? j[4].get<int>() : ranColor();
+                int b = (j.size() >= 6) ? j[5].get<int>() : ranColor();
+
+
+                engine.addBody(Body(Vector2D(x, y), mass, r, g, b));
+            }
+    } catch (const json::exception& e) {
+        std::cerr << e.what();
     }
 
     // WebView requires a valid JSON answer
     return "{}";
+    });
+
+    w.bind("startStopSim", [&](std::string req) -> std::string {
+        try
+        {
+            json j = json::parse(req);
+            if (j.is_array() && j.size() >= 1)
+            {
+                bool shouldRun = j[0].get<bool>();
+
+                if (shouldRun)
+                {
+                    engine.start();
+                }
+                else
+                {
+                    engine.stop();
+                }
+
+            }
+        }
+        catch (const json::exception&e)
+        {
+            std::cerr << e.what();
+        }
+
+        return "{}";
     });
 
 

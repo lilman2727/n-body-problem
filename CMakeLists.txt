@@ -14,6 +14,12 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(webview)
 
+FetchContent_Declare(json
+        GIT_REPOSITORY https://github.com/nlohmann/json.git
+        GIT_TAG v3.11.3
+)
+FetchContent_MakeAvailable(json)
+
 # Tady přidáme to WIN32, jak to mají oni. Zabrání to navíc tomu,
 # aby se na pozadí otevíralo černé terminálové okno.
 add_executable(n_body_problem WIN32
@@ -28,4 +34,4 @@ add_executable(n_body_problem WIN32
 # target_include_directories(n_body_problem PRIVATE ${webview_SOURCE_DIR})
 
 # 2. ZMĚNA JMENOVKY ZDE:
-target_link_libraries(n_body_problem PRIVATE webview::core)
+target_link_libraries(n_body_problem PRIVATE webview::core nlohmann_json::nlohmann_json)

@@ -23,6 +23,7 @@ Vector2D PhysicsEngine::calculateNewtonForce(const Body& first, const Body& seco
 
 void PhysicsEngine::step(double dt)
 {
+    if (!running){return;}
     // Calculating new positions of bodies
     for (Body& body : bodies)
     {
