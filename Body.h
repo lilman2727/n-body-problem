@@ -12,9 +12,10 @@ class Body
     Vector2D vel;
     Vector2D acc;
     double mass;
+    bool movable;
     public:
     Body();
-    Body(Vector2D pos, double mass, int red, int green, int blue) : pos(pos), mass(mass), RED(red), GREEN(green), BLUE(blue) {};
+    Body(Vector2D pos, double mass, bool movable ,int red, int green, int blue) : pos(pos), mass(mass), movable(movable), RED(red), GREEN(green), BLUE(blue) {};
     int RED;
     int GREEN;
     int BLUE;
@@ -26,7 +27,7 @@ class Body
     void setVel(Vector2D vel) { this->vel = vel; }
     Vector2D getAcc() const { return this->acc; }
     void setAcc(Vector2D force) { this->acc = force; }
-
+    bool isMovable() const { return this->movable; }
 
     bool operator==(const Body& rhs) const { return this == &rhs; }
     bool operator!=(const Body& rhs) const { return this != &rhs; }

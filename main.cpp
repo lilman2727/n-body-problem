@@ -51,19 +51,20 @@ int main() {
         try {
             json j = json::parse(req);
 
-            if (j.is_array() && j.size() >= 3)
+            if (j.is_array() && j.size() >= 4)
             {
                 double x = j[0].get<double>();
                 double y = j[1].get<double>();
-                double mass = j[2].get<double>() * 1e15;
+                double mass = j[2].get<double>() * 1e14;
+                bool movable = j[3].get<bool>();
 
                 // Generate random color only if JS provided one
-                int r = (j.size() >= 6) ? j[3].get<int>() : ranColor();
-                int g = (j.size() >= 6) ? j[4].get<int>() : ranColor();
-                int b = (j.size() >= 6) ? j[5].get<int>() : ranColor();
+                int r = (j.size() >= 7) ? j[4].get<int>() : ranColor();
+                int g = (j.size() >= 7) ? j[5].get<int>() : ranColor();
+                int b = (j.size() >= 7) ? j[6].get<int>() : ranColor();
 
 
-                engine.addBody(Body(Vector2D(x, y), mass, r, g, b));
+                engine.addBody(Body(Vector2D(x, y), mass, movable, r, g, b));
             }
     } catch (const json::exception& e) {
         std::cerr << e.what();
@@ -100,6 +101,10 @@ int main() {
         return "{}";
     });
 
+    w.bind("resetSim", [&](std::string req) -> std::string {
+        engine.clearBodies();
+        return "{}";
+    });
 
     //Displaying the UI
     std::filesystem::path html_path = std::filesystem::current_path() / "ui" / "index.html";

@@ -27,6 +27,7 @@ void PhysicsEngine::step(double dt)
     // Calculating new positions of bodies
     for (Body& body : bodies)
     {
+        if (!body.isMovable()) continue;
         Vector2D new_pos = body.getPos() + body.getVel() * dt + body.getAcc() * (dt * dt * 0.5);
         body.setPos(new_pos);
     }
@@ -34,6 +35,8 @@ void PhysicsEngine::step(double dt)
     // Calculating the individual forces on the bodies
     for (Body& body1 : bodies)
     {
+
+        if (!body1.isMovable()) continue;
         Vector2D force = Vector2D(0, 0);
 
         for (const Body& body2 : bodies)
