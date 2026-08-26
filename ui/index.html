@@ -12,7 +12,7 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             height: 100vh;
             overflow: hidden;
-            display: flex; /* Zásadní pro rozložení vedle sebe */
+            display: flex;
         }
 
         /* --- LEFT SIDEBAR --- */
@@ -22,7 +22,7 @@
             border-right: 1px solid #333;
             display: flex;
             flex-direction: column;
-            justify-content: space-between; /* Roztlačí obsah nahoru a dolů */
+            justify-content: space-between;
             padding: 20px;
             box-shadow: 2px 0 10px rgba(0,0,0,0.5);
             z-index: 10;
@@ -138,7 +138,7 @@
 
 
     <div class="sidebar-bottom">
-        <button id="resetBtn" style="width: 100%; padding: 10px; margin-bottom: 10px; font-weight: bold; background-color: #ff4444; color: #fff; border: none; border-radius: 5px; cursor: pointer;">RESET</button>
+        <button id="resetBtn" style="width: 100%; padding: 10px; margin-bottom: 10px; font-weight: bold; background-color: #880000; color: #fff; border: none; border-radius: 5px; cursor: pointer;">RESET</button>
         <button id="playPauseBtn">PLAY</button>
     </div>
 </aside>
@@ -322,14 +322,12 @@
 
     const resetBtn = document.getElementById('resetBtn');
     resetBtn.addEventListener('click', function() {
-        // Zavoláme C++ funkci
         if (typeof resetSim !== 'undefined') {
             resetSim();
         }
 
-        // Volitelně můžeme rovnou zastavit i simulaci, pokud běžela
         if (isSimRunning) {
-            playPauseBtn.click(); // Simulujeme kliknutí na play/pause pro vypnutí
+            playPauseBtn.click();
         }
     });
 </script>

@@ -12,12 +12,12 @@ using json = nlohmann::json;
 
 std::string getBodiesAsJSON(PhysicsEngine& engine)
 {
-    nlohmann::json j_array = nlohmann::json::array();
+    json j_array = json::array();
     const auto& bodies = engine.getBodies();
 
     for (const auto& body : bodies)
     {
-        nlohmann::json j_body;
+        json j_body;
 
         j_body["x"] = body.getPos().getX();
         j_body["y"] = body.getPos().getY();
@@ -47,7 +47,7 @@ int main() {
 
     //Binding adding bodies function
     w.bind("addBody", [&](std::string req) -> std::string {
-        // req will come in this format [x, y, mass, r, g, b]
+        // req will come in this format [x, y, mass, isMovable,r, g, b]
         try {
             json j = json::parse(req);
 
@@ -58,7 +58,7 @@ int main() {
                 double mass = j[2].get<double>() * 1e14;
                 bool movable = j[3].get<bool>();
 
-                // Generate random color only if JS provided one
+                // Generate random color only if JS didn't provide one
                 int r = (j.size() >= 7) ? j[4].get<int>() : ranColor();
                 int g = (j.size() >= 7) ? j[5].get<int>() : ranColor();
                 int b = (j.size() >= 7) ? j[6].get<int>() : ranColor();
@@ -70,7 +70,7 @@ int main() {
         std::cerr << e.what();
     }
 
-    // WebView requires a valid JSON answer
+    // WebView requires a valid JSON response
     return "{}";
     });
 
@@ -124,7 +124,7 @@ int main() {
             w.dispatch([&w, json_data]() {
                 w.eval("updateBodies(" + json_data + ");");
             });
-
+            //simulation is 60FPS -> make the thread sleep for approx 1/60s
             std::this_thread::sleep_for(std::chrono::milliseconds(16));
         }
     });

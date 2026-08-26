@@ -1,7 +1,3 @@
-//
-// Created by 004ha on 20.08.2026.
-//
-
 #include "PhysicsEngine.h"
 #include <cmath>
 #include <algorithm>
@@ -35,7 +31,6 @@ void PhysicsEngine::step(double dt)
     // Calculating the individual forces on the bodies
     for (Body& body1 : bodies)
     {
-
         if (!body1.isMovable()) continue;
         Vector2D force = Vector2D(0, 0);
 
@@ -46,11 +41,11 @@ void PhysicsEngine::step(double dt)
                 force += calculateNewtonForce(body1, body2);
             }
         }
+
         Vector2D new_acc = force / body1.getMass();
         Vector2D new_vel = body1.getVel() + (body1.getAcc() + new_acc)*(dt*0.5);
         body1.setVel(new_vel);
         body1.setAcc(new_acc);
-
     }
 
     bodies.erase(
@@ -58,8 +53,6 @@ void PhysicsEngine::step(double dt)
         double x = b.getPos().getX();
         double y = b.getPos().getY();
 
-        // Nastavíme hranice - okno má 1280x720, takže dáme velkou rezervu
-        // Pokud je x nebo y mimo tyto obří meze, lambda vrátí true (smazat)
         return (std::abs(x) > 3*1920 || std::abs(y) > 3*1080);
     }),
     bodies.end()

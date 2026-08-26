@@ -1,7 +1,3 @@
-//
-// Created by 004ha on 20.08.2026.
-//
-
 #ifndef N_BODY_PROBLEM_PHYSICSENGINE_H
 #define N_BODY_PROBLEM_PHYSICSENGINE_H
 
